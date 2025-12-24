@@ -1,0 +1,33 @@
+name: mobile_app
+description: "an App For Tracking Your Delivery or Somethin."
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^1.1.1
+  firebase_core: ^4.3.0
+  firebase_database: ^12.1.1
+  google_maps_flutter : ^2.14.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  csv : ^6.0.0
+  intl: ^0.20.2
+  syncfusion_flutter_charts: ^32.1.19
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  
+flutter_launcher_icons :
+  android : true
+  image_path : "assets/logoapp.png"
+
+flutter:
+  uses-material-design: true
