@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Tracker Logistique LoRa</title>
+  
+  <!-- Chart.js pour les graphiques -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --dark: #1f2937;
+      --light: #f3f4f6;
+      --white: #ffffff;
+      --text: #374151;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--white);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-badge.connected {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.disconnected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    /* GRID LAYOUT */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* CARDS */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    /* STAT CARDS */
+    .stat-card {
+      grid-column: span 3;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-change {
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat-change.positive {
+      color: var(--success);
+    }
+
+    .stat-change.negative {
+      color: var(--danger);
+    }
+
+    /* CHART CARD */
+    .chart-card {
+      grid-column: span 8;
+    }
+
+    /* ALERT CARD */
+    .alert-card {
+      grid-column: span 4;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .alert-item {
+      padding: 1rem;
+      border-left: 4px solid;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .alert-item.danger {
+      background: #fef2f2;
+      border-color: var(--danger);
+    }
+
+    .alert-item.warning {
+      background: #fffbeb;
+      border-color: var(--warning);
+    }
+
+    .alert-item.info {
+      background: #eff6ff;
+      border-color: var(--info);
+    }
+
+    .alert-time {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    /* MAP CARD */
+    .map-card {
+      grid-column: span 6;
+      height: 400px;
+    }
+
+    #map {
+      width: 100%;
+      height: 300px;
+      background: var(--light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
+
+    /* DATA TABLE */
+    .table-card {
+      grid-column: span 6;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--light);
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    /* PROGRESS BAR */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s;
+    }
+
+    /* LOADING */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--light);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .stat-card,
+      .chart-card,
+      .alert-card,
+      .map-card,
+      .table-card {
+        grid-column: span 12;
+      }
+
+      .navbar {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 0 1rem;
+      }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      animation: fadeIn 0.5s ease;
+    }
+
+    /* PULSE ANIMATION FOR ALERTS */
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fas fa-box"></i>
+      Tracker Logistique LoRa
+    </div>
+    <div class="navbar-actions">
+      <div id="statusBadge" class="status-badge disconnected">
+        <i class="fas fa-circle"></i>
+        <span>Déconnecté</span>
+      </div>
+      <button class="btn btn-primary" onclick="exportData()">
+        <i class="fas fa-download"></i>
+        Exporter CSV
+      </button>
+      <button class="btn btn-primary" onclick="refreshData()">
+        <i class="fas fa-sync-alt"></i>
+        Actualiser
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+    <!-- STATS CARDS -->
+    <div class="dashboard-grid">
+      <!-- Temperature Card -->
+      <div class="card stat-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fee2e2; color: #dc2626;">
+              <i class="fas fa-thermometer-half"></i>
+            </div>
+            Température
+          </div>
+        </div>
+        <div class="stat-value" id="tempValue">-- °C</div>
+        <div class="stat-label">Température actuelle</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="tempProgress" style="width: 0%"></div>
+        </div>
+        <div class="stat-change" id="tempStatus">
+          <i class="fas fa-check-circle"></i>
+          Normal
+        </div>
+      </div>
+
+      <!-- Humidity Card -->
+      <div class="card stat-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon" style="background: #dbeafe; color: #2563eb;">
+              <i class="fas fa-tint"></i>
+            </div>
+            Humidité
+          </div>
+        </div>
+        <div class="stat-value" id="humValue">-- %</div>
+        <div class="stat-label">Humidité relative</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="humProgress" style="width: 0%"></div>
+        </div>
+        <div class="stat-change positive" id="humStatus">
+          <i class="fas fa-check-circle"></i>
+          Normal
+        </div>
+      </div>
+
+      <!-- Battery Card -->
+      <div class="card stat-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon" style="background: #d1fae5; color: #059669;">
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+            Batterie
+          </div>
+        </div>
+        <div class="stat-value" id="battValue">-- %</div>
+        <div class="stat-label">Niveau de charge</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="battProgress" style="width: 0%"></div>
+        </div>
+        <div class="stat-change positive" id="battStatus">
+          <i class="fas fa-check-circle"></i>
+          Charge OK
+        </div>
+      </div>
+
+      <!-- Vibration Card -->
+      <div class="card stat-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fef3c7; color: #d97706;">
+              <i class="fas fa-wave-square"></i>
+            </div>
+            Vibrations
+          </div>
+        </div>
+        <div class="stat-value" id="shockValue">Aucun choc</div>
+        <div class="stat-label">État des vibrations</div>
+        <div style="margin-top: 1rem;">
+          <small>X: <strong id="accelX">--</strong></small><br>
+          <small>Y: <strong id="accelY">--</strong></small><br>
+          <small>Z: <strong id="accelZ">--</strong></small>
+        </div>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-chart-line"></i>
+            Évolution en temps réel
+          </div>
+          <select id="chartSelector" onchange="changeChart()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border);">
+            <option value="temp">Température</option>
+            <option value="hum">Humidité</option>
+            <option value="batt">Batterie</option>
+          </select>
+        </div>
+        <canvas id="mainChart" style="max-height: 250px;"></canvas>
+      </div>
+
+      <!-- Alerts Card -->
+      <div class="card alert-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-bell"></i>
+            Alertes récentes
+          </div>
+          <button class="btn" style="background: var(--light); padding: 0.25rem 0.5rem;" onclick="clearAlerts()">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div id="alertsList">
+          <p style="text-align: center; color: #6b7280; padding: 2rem;">
+            Aucune alerte
+          </p>
+        </div>
+      </div>
+
+      <!-- Map Card -->
+      <div class="card map-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Localisation du colis
+          </div>
+        </div>
+        <div id="map">
+          <div style="text-align: center;">
+            <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <p>Carte GPS (à implémenter)</p>
+            <small>Latitude: <span id="latitude">--</span></small><br>
+            <small>Longitude: <span id="longitude">--</span></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table Card -->
+      <div class="card table-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-table"></i>
+            Historique des données
+          </div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Heure</th>
+                <th>Temp (°C)</th>
+                <th>Hum (%)</th>
+                <th>Batt (%)</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable">
+              <tr>
+                <td colspan="4" style="text-align: center; color: #6b7280;">
+                  Aucune donnée
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK Modular Version -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue, onDisconnect, serverTimestamp, get, child } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: ""
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, "tracker/colis_01");
+
+    // Variables globales
+    let mainChart;
+    let tempData = [];
+    let humData = [];
+    let battData = [];
+    let timeLabels = [];
+    let alertsList = [];
+    let dataHistory = [];
+
+    // Initialisation du graphique
+    function initChart() {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Température (°C)',
+            data: tempData,
+            borderColor: '#dc2626',
+            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false
+            }
+          }
+        }
+      });
+    }
+
+    // Changer le graphique
+    function changeChart() {
+      const selector = document.getElementById('chartSelector').value;
+      let data, label, color, bgColor;
+
+      switch(selector) {
+        case 'temp':
+          data = tempData;
+          label = 'Température (°C)';
+          color = '#dc2626';
+          bgColor = 'rgba(220, 38, 38, 0.1)';
+          break;
+        case 'hum':
+          data = humData;
+          label = 'Humidité (%)';
+          color = '#2563eb';
+          bgColor = 'rgba(37, 99, 235, 0.1)';
+          break;
+        case 'batt':
+          data = battData;
+          label = 'Batterie (%)';
+          color = '#059669';
+          bgColor = 'rgba(5, 150, 105, 0.1)';
+          break;
+      }
+
+      mainChart.data.datasets[0] = {
+        label: label,
+        data: data,
+        borderColor: color,
+        backgroundColor: bgColor,
+        tension: 0.4,
+        fill: true
+      };
+      mainChart.update();
+    }
+
+    // Vérifier la connexion Firebase
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snapshot) => {
+      const statusBadge = document.getElementById("statusBadge");
+      if (snapshot.val() === true) {
+        statusBadge.className = "status-badge connected";
+        statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Connecté</span>';
+      } else {
+        statusBadge.className = "status-badge disconnected";
+        statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Déconnecté</span>';
+      }
+    });
+
+    // Écoute des données Firebase
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        updateDashboard(data);
+      }
+    }, (error) => {
+      console.error("Erreur Firebase:", error);
+      addAlert('danger', 'Erreur de connexion à la base de données');
+    });
+
+    // Mise à jour du dashboard
+    function updateDashboard(data) {
+      const temp = data.temperature || 0;
+      const hum = data.humidite || 0;
+      const ax = data.accelX || 0;
+      const ay = data.accelY || 0;
+      const az = data.accelZ || 0;
+      const shock = data.shock || 0;
+      const batt = data.batterie || 0;
+
+      // Température
+      document.getElementById('tempValue').innerText = temp.toFixed(1) + ' °C';
+      document.getElementById('tempProgress').style.width = Math.min((temp / 50) * 100, 100) + '%';
+      
+      const tempStatus = document.getElementById('tempStatus');
+      if (temp < 5) {
+        tempStatus.className = 'stat-change negative';
+        tempStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Trop froid';
+        addAlert('danger', 'Température trop basse: ' + temp.toFixed(1) + '°C');
+      } else if (temp > 30) {
+        tempStatus.className = 'stat-change negative';
+        tempStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Trop chaud';
+        addAlert('danger', 'Température trop élevée: ' + temp.toFixed(1) + '°C');
+      } else {
+        tempStatus.className = 'stat-change positive';
+        tempStatus.innerHTML = '<i class="fas fa-check-circle"></i> Normal';
+      }
+
+      // Humidité
+      document.getElementById('humValue').innerText = hum.toFixed(1) + ' %';
+      document.getElementById('humProgress').style.width = hum + '%';
+      
+      const humStatus = document.getElementById('humStatus');
+      if (hum < 20 || hum > 80) {
+        humStatus.className = 'stat-change negative';
+        humStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Anormal';
+        addAlert('warning', 'Humidité anormale: ' + hum.toFixed(1) + '%');
+      } else {
+        humStatus.className = 'stat-change positive';
+        humStatus.innerHTML = '<i class="fas fa-check-circle"></i> Normal';
+      }
+
+      // Batterie
+      document.getElementById('battValue').innerText = batt + ' %';
+      document.getElementById('battProgress').style.width = batt + '%';
+      
+      const battStatus = document.getElementById('battStatus');
+      if (batt < 20) {
+        battStatus.className = 'stat-change negative';
+        battStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Batterie faible';
+        addAlert('warning', 'Batterie faible: ' + batt + '%');
+      } else {
+        battStatus.className = 'stat-change positive';
+        battStatus.innerHTML = '<i class="fas fa-check-circle"></i> Charge OK';
+      }
+
+      // Vibrations
+      document.getElementById('accelX').innerText = ax;
+      document.getElementById('accelY').innerText = ay;
+      document.getElementById('accelZ').innerText = az;
+      
+      const shockValue = document.getElementById('shockValue');
+      if (shock === 1) {
+        shockValue.innerText = 'CHOC DÉTECTÉ !';
+        shockValue.style.color = '#dc2626';
+        shockValue.classList.add('pulse');
+        addAlert('danger', 'Choc détecté sur le colis !');
+      } else {
+        shockValue.innerText = 'Aucun choc';
+        shockValue.style.color = '#059669';
+        shockValue.classList.remove('pulse');
+      }
+
+      // Mise à jour des graphiques
+      const now = new Date().toLocaleTimeString();
+      timeLabels.push(now);
+      tempData.push(temp);
+      humData.push(hum);
+      battData.push(batt);
+
+      // Limiter à 20 points
+      if (timeLabels.length > 20) {
+        timeLabels.shift();
+        tempData.shift();
+        humData.shift();
+        battData.shift();
+      }
+
+      if (mainChart) {
+        mainChart.data.labels = timeLabels;
+        changeChart(); // Mettre à jour avec le graphique sélectionné
+      }
+
+      // Ajouter à l'historique
+      addToHistory(temp, hum, batt);
+    }
+
+    // Ajouter une alerte
+    function addAlert(type, message) {
+      const time = new Date().toLocaleTimeString();
+      const alertId = Date.now();
+      
+      // Éviter les doublons
+      if (alertsList.some(a => a.message === message && Date.now() - a.id < 10000)) {
+        return;
+      }
+
+      alertsList.unshift({ id: alertId, type, message, time });
+      
+      if (alertsList.length > 10) {
+        alertsList.pop();
+      }
+
+      renderAlerts();
+    }
+
+    // Afficher les alertes
+    function renderAlerts() {
+      const container = document.getElementById('alertsList');
+      
+      if (alertsList.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucune alerte</p>';
+        return;
+      }
+
+      container.innerHTML = alertsList.map(alert => `
+        <div class="alert-item ${alert.type}">
+          <div style="flex-shrink: 0;">
+            <i class="fas ${alert.type === 'danger' ? 'fa-exclamation-circle' : alert.type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}" 
+               style="font-size: 1.5rem; color: ${alert.type === 'danger' ? '#dc2626' : alert.type === 'warning' ? '#d97706' : '#2563eb'};"></i>
+          </div>
+          <div style="flex-grow: 1;">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">${alert.message}</div>
+            <div class="alert-time">${alert.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Effacer les alertes
+    function clearAlerts() {
+      alertsList = [];
+      renderAlerts();
+    }
+
+    // Ajouter à l'historique
+    function addToHistory(temp, hum, batt) {
+      const time = new Date().toLocaleTimeString();
+      dataHistory.unshift({ time, temp, hum, batt });
+      
+      if (dataHistory.length > 50) {
+        dataHistory.pop();
+      }
+
+      renderTable();
+    }
+
+    // Afficher le tableau
+    function renderTable() {
+      const tbody = document.getElementById('dataTable');
+      
+      if (dataHistory.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">Aucune donnée</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = dataHistory.slice(0, 10).map(row => `
+        <tr>
+          <td>${row.time}</td>
+          <td>${row.temp.toFixed(1)}</td>
+          <td>${row.hum.toFixed(1)}</td>
+          <td>${row.batt}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Exporter en CSV
+    function exportData() {
+      let csv = 'Heure,Température (°C),Humidité (%),Batterie (%)\n';
+      dataHistory.forEach(row => {
+        csv += `${row.time},${row.temp},${row.hum},${row.batt}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tracker_data_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+    }
+
+    // Actualiser
+    function refreshData() {
+      location.reload();
+    }
+
+    // Initialisation
+    window.onload = function() {
+      initChart();
+    };
+
+    // Exposer les fonctions au scope global pour les boutons HTML
+    window.exportData = exportData;
+    window.refreshData = refreshData;
+    window.clearAlerts = clearAlerts;
+    window.changeChart = changeChart;
+  </script>
+</body>
+</html>

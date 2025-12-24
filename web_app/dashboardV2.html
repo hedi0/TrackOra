@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Tracker IoT - Dashboard Pro</title>
+  
+  <!-- Firebase SDK v12.7.0 -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: ""
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    window.database = getDatabase(app);
+  </script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      
+      /* Glass effect */
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      
+      /* Animations */
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--gray-800);
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--gray-100);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .brand-logo {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.625rem 1.25rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .btn-icon:hover {
+      background: var(--gray-200);
+      transform: rotate(15deg);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.disconnected {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+    }
+
+    /* Grid System */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--glass-border);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+      grid-column: span 3;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 1rem 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .stat-progress {
+      width: 100%;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .stat-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Chart Card */
+    .chart-card {
+      grid-column: span 8;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    /* Map Card */
+    .map-card {
+      grid-column: span 4;
+    }
+
+    #map {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+
+    /* Alerts Card */
+    .alert-card {
+      grid-column: span 4;
+      max-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .alert-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .alert-item {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: var(--transition-smooth);
+      border: 1px solid transparent;
+    }
+
+    .alert-item:hover {
+      transform: translateX(5px);
+      background: var(--gray-50);
+    }
+
+    .alert-item.danger {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      border-color: #fecaca;
+    }
+
+    .alert-item.warning {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border-color: #fde68a;
+    }
+
+    .alert-item.info {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-color: #bfdbfe;
+    }
+
+    .alert-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .alert-item.danger .alert-icon {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .alert-item.warning .alert-icon {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .alert-item.info .alert-icon {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-time {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: 0.25rem;
+    }
+
+    /* Table Card */
+    .table-card {
+      grid-column: span 8;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: var(--transition-smooth);
+    }
+
+    tbody tr:hover {
+      background: var(--gray-50);
+    }
+
+    td {
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
+
+    /* Badges */
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Loading */
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .stat-card {
+        grid-column: span 6;
+      }
+      
+      .chart-card,
+      .table-card {
+        grid-column: span 12;
+      }
+      
+      .map-card,
+      .alert-card {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .container {
+        padding: 0 1rem;
+      }
+      
+      .dashboard-grid {
+        gap: 1rem;
+      }
+      
+      .stat-card,
+      .chart-card,
+      .map-card,
+      .alert-card,
+      .table-card {
+        grid-column: span 12;
+      }
+      
+      .navbar-actions {
+        gap: 0.5rem;
+      }
+      
+      .btn span {
+        display: none;
+      }
+      
+      .btn {
+        padding: 0.5rem;
+      }
+    }
+
+    /* Dark mode ready */
+    .dark-mode {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: var(--gray-100);
+    }
+
+    .dark-mode .card {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--gray-100);
+    }
+
+    .dark-mode .card-title {
+      color: var(--gray-100);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="brand-logo">
+        <i class="fas fa-satellite-dish"></i>
+      </div>
+      <span>Smart Tracker IoT</span>
+    </div>
+    <div class="navbar-actions">
+      <div id="statusBadge" class="status-badge">
+        <i class="fas fa-circle"></i>
+        <span>Connecté</span>
+      </div>
+      <button class="btn btn-icon" onclick="toggleDarkMode()" title="Mode sombre">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="btn btn-primary" onclick="exportData()">
+        <i class="fas fa-download"></i>
+        <span>Exporter</span>
+      </button>
+      <button class="btn btn-outline" onclick="refreshData()">
+        <i class="fas fa-sync-alt"></i>
+        <span>Actualiser</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Dashboard Surveillance IoT</h1>
+      <p class="dashboard-subtitle">Surveillance en temps réel • Colis #TRK-2024-001</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-grid">
+      <!-- Temperature Card -->
+      <div class="card stat-card animate-fadeIn">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-thermometer-half"></i>
+            </div>
+            Température
+          </div>
+          <div class="badge" id="tempBadge">Normal</div>
+        </div>
+        <div class="stat-value" id="tempValue">--°C</div>
+        <div class="stat-label">Capteur DS18B20</div>
+        <div class="stat-progress">
+          <div class="stat-progress-fill" id="tempProgress"></div>
+        </div>
+        <div class="stat-change" id="tempTrend">
+          <i class="fas fa-arrow-up"></i>
+          <span>Stable</span>
+        </div>
+      </div>
+
+      <!-- Humidity Card -->
+      <div class="card stat-card animate-fadeIn" style="animation-delay: 0.1s">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-tint"></i>
+            </div>
+            Humidité
+          </div>
+          <div class="badge" id="humBadge">Normal</div>
+        </div>
+        <div class="stat-value" id="humValue">--%</div>
+        <div class="stat-label">Capteur DHT22</div>
+        <div class="stat-progress">
+          <div class="stat-progress-fill" id="humProgress"></div>
+        </div>
+        <div class="stat-change" id="humTrend">
+          <i class="fas fa-minus"></i>
+          <span>Constant</span>
+        </div>
+      </div>
+
+      <!-- Battery Card -->
+      <div class="card stat-card animate-fadeIn" style="animation-delay: 0.2s">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-battery-full"></i>
+            </div>
+            Batterie
+          </div>
+          <div class="badge" id="battBadge">Chargé</div>
+        </div>
+        <div class="stat-value" id="battValue">--%</div>
+        <div class="stat-label">Li-Po 3.7V 2000mAh</div>
+        <div class="stat-progress">
+          <div class="stat-progress-fill" id="battProgress"></div>
+        </div>
+        <div class="stat-change" id="battTrend">
+          <i class="fas fa-bolt"></i>
+          <span>Autonomie: 72h</span>
+        </div>
+      </div>
+
+      <!-- Vibration Card -->
+      <div class="card stat-card animate-fadeIn" style="animation-delay: 0.3s">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-wave-square"></i>
+            </div>
+            Vibrations
+          </div>
+          <div class="badge" id="vibBadge">Stable</div>
+        </div>
+        <div class="stat-value" id="shockValue">0 G</div>
+        <div class="stat-label">Accéléromètre MPU6050</div>
+        <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+          <div style="text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--gray-600);">X</div>
+            <div style="font-weight: 600; font-size: 1.25rem;" id="accelX">0.00</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--gray-600);">Y</div>
+            <div style="font-weight: 600; font-size: 1.25rem;" id="accelY">0.00</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--gray-600);">Z</div>
+            <div style="font-weight: 600; font-size: 1.25rem;" id="accelZ">0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            Analytics Temps Réel
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-outline btn-sm" onclick="changeChartType('line')">
+              <i class="fas fa-chart-line"></i>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="changeChartType('bar')">
+              <i class="fas fa-chart-bar"></i>
+            </button>
+            <select id="chartSelector" onchange="changeChartData()" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--gray-200); background: white;">
+              <option value="temp">Température</option>
+              <option value="hum">Humidité</option>
+              <option value="batt">Batterie</option>
+              <option value="all">Toutes les données</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="mainChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Map Card -->
+      <div class="card map-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            Géolocalisation
+          </div>
+          <button class="btn btn-icon" onclick="centerMap()" title="Centrer la carte">
+            <i class="fas fa-crosshairs"></i>
+          </button>
+        </div>
+        <div id="map"></div>
+        <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--gray-600);">Latitude</div>
+            <div style="font-weight: 600;" id="latitude">48.8566</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--gray-600);">Longitude</div>
+            <div style="font-weight: 600;" id="longitude">2.3522</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Card -->
+      <div class="card alert-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            Alertes Récentes
+            <span class="badge badge-danger" id="alertCount">0</span>
+          </div>
+          <button class="btn btn-icon" onclick="clearAlerts()" title="Effacer les alertes">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div class="alert-list" id="alertsList">
+          <div style="text-align: center; padding: 3rem 1rem; color: var(--gray-400);">
+            <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <p>Aucune alerte pour le moment</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table Card -->
+      <div class="card table-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-table"></i>
+            </div>
+            Historique des Données
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span style="font-size: 0.875rem; color: var(--gray-600);" id="dataCount">0 enregistrements</span>
+            <button class="btn btn-icon" onclick="refreshTable()" title="Actualiser">
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Heure</th>
+                <th>Température</th>
+                <th>Humidité</th>
+                <th>Batterie</th>
+                <th>Vibrations</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+                  <div class="loading-spinner"></div>
+                  <p style="margin-top: 1rem;">Chargement des données...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem; color: rgba(255, 255, 255, 0.7); font-size: 0.875rem;">
+      <p>Smart Tracker IoT • Surveillance en temps réel • Dernière mise à jour: <span id="lastUpdate">--:--:--</span></p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+        <i class="fas fa-satellite"></i> Connecté à Firebase • 
+        <i class="fas fa-shield-alt"></i> Sécurisé • 
+        <i class="fas fa-mobile-alt"></i> Responsive
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+    // Variables globales
+    let mainChart;
+    let map;
+    let marker;
+    let tempData = [];
+    let humData = [];
+    let battData = [];
+    let timeLabels = [];
+    let alertsList = [];
+    let dataHistory = [];
+    let lastTemp = 0;
+
+    // Initialisation de la map carte
+    function initMap() {
+      map = L.map('map').setView([48.8566, 2.3522], 13);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(map);
+      
+      marker = L.marker([48.8566, 2.3522], {
+        icon: L.divIcon({
+          html: '<div style="background: linear-gradient(135deg, #ef4444, #f97316); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><i class="fas fa-box"></i></div>',
+          iconSize: [30, 30],
+          className: 'marker-pulse'
+        })
+      }).addTo(map);
+      
+      marker.bindPopup("<b>Colis #TRK-2024-001</b><br>Position actuelle");
+    }
+
+    // Initialisation du graphique
+    function initChart() {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [
+            {
+              label: 'Température (°C)',
+              data: tempData,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2
+            },
+            {
+              label: 'Humidité (%)',
+              data: humData,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2
+            },
+            {
+              label: 'Batterie (%)',
+              data: battData,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                padding: 20,
+                usePointStyle: true,
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'nearest'
+          }
+        }
+      });
+    }
+
+    // Changer le type de graphique
+    function changeChartType(type) {
+      mainChart.config.type = type;
+      mainChart.update();
+    }
+
+    // Changer les données affichées
+    function changeChartData() {
+      const selector = document.getElementById('chartSelector').value;
+      
+      mainChart.data.datasets.forEach(dataset => {
+        dataset.hidden = true;
+      });
+      
+      switch(selector) {
+        case 'temp':
+          mainChart.data.datasets[0].hidden = false;
+          break;
+        case 'hum':
+          mainChart.data.datasets[1].hidden = false;
+          break;
+        case 'batt':
+          mainChart.data.datasets[2].hidden = false;
+          break;
+        case 'all':
+          mainChart.data.datasets.forEach(dataset => {
+            dataset.hidden = false;
+          });
+          break;
+      }
+      
+      mainChart.update();
+    }
+
+    // Connexion Firebase
+    const connectedRef = ref(window.database, ".info/connected");
+    onValue(connectedRef, (snapshot) => {
+      const statusBadge = document.getElementById("statusBadge");
+      if (snapshot.val() === true) {
+        statusBadge.className = "status-badge";
+        statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Connecté</span>';
+      } else {
+        statusBadge.className = "status-badge disconnected";
+        statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Déconnecté</span>';
+      }
+    });
+
+    // Écoute des données
+    const dbRef = ref(window.database, "tracker/colis_01");
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        updateDashboard(data);
+        updateLastUpdate();
+      }
+    });
+
+    // Mise à jour du dashboard
+    function updateDashboard(data) {
+      const temp = data.temperature || 0;
+      const hum = data.humidite || 0;
+      const ax = data.accelX || 0;
+      const ay = data.accelY || 0;
+      const az = data.accelZ || 0;
+      const shock = data.shock || 0;
+      const batt = data.batterie || 0;
+      const lat = data.latitude || 48.8566;
+      const lon = data.longitude || 2.3522;
+
+      // Température
+      document.getElementById('tempValue').innerText = temp.toFixed(1) + '°C';
+      document.getElementById('tempProgress').style.width = Math.min((temp / 50) * 100, 100) + '%';
+      
+      const tempBadge = document.getElementById('tempBadge');
+      const tempTrend = document.getElementById('tempTrend');
+      
+      if (temp < 5) {
+        tempBadge.className = 'badge badge-danger';
+        tempBadge.textContent = 'Trop froid';
+        tempTrend.innerHTML = '<i class="fas fa-arrow-down" style="color: #3b82f6"></i><span>En baisse</span>';
+        addAlert('danger', `⚠️ Température critique: ${temp.toFixed(1)}°C`);
+      } else if (temp > 30) {
+        tempBadge.className = 'badge badge-danger';
+        tempBadge.textContent = 'Trop chaud';
+        tempTrend.innerHTML = '<i class="fas fa-arrow-up" style="color: #ef4444"></i><span>En hausse</span>';
+        addAlert('danger', `🔥 Température élevée: ${temp.toFixed(1)}°C`);
+      } else {
+        tempBadge.className = 'badge badge-success';
+        tempBadge.textContent = 'Normal';
+        tempTrend.innerHTML = '<i class="fas fa-minus" style="color: #10b981"></i><span>Stable</span>';
+      }
+
+      // Humidité
+      document.getElementById('humValue').innerText = hum.toFixed(1) + '%';
+      document.getElementById('humProgress').style.width = hum + '%';
+      
+      const humBadge = document.getElementById('humBadge');
+      if (hum < 20 || hum > 80) {
+        humBadge.className = 'badge badge-warning';
+        humBadge.textContent = 'Anormal';
+        addAlert('warning', `💧 Humidité anormale: ${hum.toFixed(1)}%`);
+      } else {
+        humBadge.className = 'badge badge-success';
+        humBadge.textContent = 'Normal';
+      }
+
+      // Batterie
+      document.getElementById('battValue').innerText = batt + '%';
+      document.getElementById('battProgress').style.width = batt + '%';
+      
+      const battBadge = document.getElementById('battBadge');
+      if (batt < 20) {
+        battBadge.className = 'badge badge-danger';
+        battBadge.textContent = 'Faible';
+        addAlert('warning', `🔋 Batterie faible: ${batt}%`);
+      } else if (batt < 50) {
+        battBadge.className = 'badge badge-warning';
+        battBadge.textContent = 'Moyenne';
+      } else {
+        battBadge.className = 'badge badge-success';
+        battBadge.textContent = 'Chargé';
+      }
+
+      // Vibrations
+      document.getElementById('accelX').innerText = ax.toFixed(2);
+      document.getElementById('accelY').innerText = ay.toFixed(2);
+      document.getElementById('accelZ').innerText = az.toFixed(2);
+      
+      const shockValue = document.getElementById('shockValue');
+      const vibBadge = document.getElementById('vibBadge');
+      
+      const acceleration = Math.sqrt(ax*ax + ay*ay + az*az).toFixed(2);
+      shockValue.textContent = acceleration + ' G';
+      
+      if (shock === 1 || acceleration > 2) {
+        vibBadge.className = 'badge badge-danger';
+        vibBadge.textContent = 'Choc détecté';
+        shockValue.classList.add('animate-pulse');
+        addAlert('danger', '🚨 Choc détecté sur le colis !');
+      } else {
+        vibBadge.className = 'badge badge-success';
+        vibBadge.textContent = 'Stable';
+        shockValue.classList.remove('animate-pulse');
+      }
+
+      // Mise à jour de la carte
+      if (map && marker) {
+        marker.setLatLng([lat, lon]);
+        map.setView([lat, lon], 13);
+        document.getElementById('latitude').textContent = lat.toFixed(4);
+        document.getElementById('longitude').textContent = lon.toFixed(4);
+      }
+
+      // Mise à jour des graphiques
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      
+      timeLabels.push(timeStr);
+      tempData.push(temp);
+      humData.push(hum);
+      battData.push(batt);
+
+      // Limiter à 15 points
+      if (timeLabels.length > 15) {
+        timeLabels.shift();
+        tempData.shift();
+        humData.shift();
+        battData.shift();
+      }
+
+      if (mainChart) {
+        mainChart.data.labels = timeLabels;
+        mainChart.data.datasets[0].data = tempData;
+        mainChart.data.datasets[1].data = humData;
+        mainChart.data.datasets[2].data = battData;
+        mainChart.update();
+      }
+
+      // Ajouter à l'historique
+      addToHistory(temp, hum, batt, acceleration, timeStr);
+    }
+
+    // Ajouter une alerte
+    function addAlert(type, message) {
+      const time = new Date();
+      const alertId = Date.now();
+      
+      // Éviter les doublons récents
+      const recentAlert = alertsList.find(a => 
+        a.message === message && 
+        (time - new Date(a.id)) < 30000 // 30 secondes
+      );
+      
+      if (recentAlert) return;
+
+      alertsList.unshift({ 
+        id: alertId, 
+        type, 
+        message, 
+        time: time.toLocaleTimeString('fr-FR', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      });
+      
+      if (alertsList.length > 8) {
+        alertsList.pop();
+      }
+
+      renderAlerts();
+      
+      // Notification navigateur
+      if (Notification.permission === "granted") {
+        new Notification("Smart Tracker Alert", { body: message });
+      }
+    }
+
+    // Afficher les alertes
+    function renderAlerts() {
+      const container = document.getElementById('alertsList');
+      const countBadge = document.getElementById('alertCount');
+      
+      countBadge.textContent = alertsList.length;
+      
+      if (alertsList.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem 1rem; color: var(--gray-400);">
+            <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <p>Aucune alerte pour le moment</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = alertsList.map(alert => `
+        <div class="alert-item ${alert.type}">
+          <div class="alert-icon">
+            <i class="fas ${alert.type === 'danger' ? 'fa-exclamation-triangle' : alert.type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+          </div>
+          <div class="alert-content">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">${alert.message}</div>
+            <div class="alert-time">${alert.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Effacer les alertes
+    function clearAlerts() {
+      alertsList = [];
+      renderAlerts();
+    }
+
+    // Ajouter à l'historique
+    function addToHistory(temp, hum, batt, vibration, timeStr) {
+      const status = temp < 5 || temp > 30 ? 'danger' : 
+                    hum < 20 || hum > 80 ? 'warning' : 
+                    batt < 20 ? 'warning' : 'success';
+      
+      dataHistory.unshift({ 
+        time: timeStr, 
+        temp, 
+        hum, 
+        batt, 
+        vibration,
+        status
+      });
+      
+      if (dataHistory.length > 20) {
+        dataHistory.pop();
+      }
+
+      renderTable();
+    }
+
+    // Afficher le tableau
+    function renderTable() {
+      const tbody = document.getElementById('dataTable');
+      const countElement = document.getElementById('dataCount');
+      
+      countElement.textContent = `${dataHistory.length} enregistrements`;
+      
+      tbody.innerHTML = dataHistory.map(row => `
+        <tr>
+          <td>${row.time}</td>
+          <td>${row.temp.toFixed(1)}°C</td>
+          <td>${row.hum.toFixed(1)}%</td>
+          <td>${row.batt}%</td>
+          <td>${row.vibration} G</td>
+          <td>
+            <span class="badge ${row.status === 'success' ? 'badge-success' : row.status === 'warning' ? 'badge-warning' : 'badge-danger'}">
+              ${row.status === 'success' ? 'Normal' : row.status === 'warning' ? 'Attention' : 'Critique'}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Actualiser le tableau
+    function refreshTable() {
+      renderTable();
+    }
+
+    // Centrer la carte
+    function centerMap() {
+      if (map && marker) {
+        map.setView(marker.getLatLng(), 13);
+      }
+    }
+
+    // Exporter les données
+    function exportData() {
+      let csv = 'Heure,Température (°C),Humidité (%),Batterie (%),Vibrations (G),Statut\n';
+      dataHistory.forEach(row => {
+        csv += `${row.time},${row.temp},${row.hum},${row.batt},${row.vibration},${row.status}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `tracker_data_${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Actualiser
+    function refreshData() {
+      window.location.reload();
+    }
+
+    // Mode sombre/clair
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const icon = document.querySelector('.btn-icon .fa-moon');
+      if (icon) {
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+      }
+    }
+
+    // Mettre à jour le timestamp
+    function updateLastUpdate() {
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent = 
+        now.toLocaleTimeString('fr-FR', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit'
+        });
+    }
+
+    // Demander la permission de notifications
+    function requestNotificationPermission() {
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+
+    // Initialisation
+    window.onload = function() {
+      initChart();
+      initMap();
+      requestNotificationPermission();
+      updateLastUpdate();
+      
+      // Mettre à jour le timestamp toutes les secondes
+      setInterval(updateLastUpdate, 1000);
+    };
+  </script>
+</body>
+</html>
