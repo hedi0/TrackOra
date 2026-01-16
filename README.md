@@ -221,4 +221,4 @@ Under the Apache License 2.0, you are free to:
 
 Provided that you:
 *   Include a copy of the license.
-*   Retain all copyright, patent, trademark, and attribution n
+*   Retain all copyright, patent, trademark, and attribu
