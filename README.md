@@ -220,4 +220,4 @@ Under the Apache License 2.0, you are free to:
 *   **Use** the Work for **commercial purposes**.
 
 Provided that you
-*   Include a copy of the licen*   Retain all copyright, patent, trademark, an
+*   Include a copy of the licen*   Retain all copyright, patent, tr
