@@ -217,4 +217,4 @@ Under the Apache License 2.0, you are free to:
 *   **Reproduce** and **distribute** copies of the Work.
 *   **Modify** and create **derivative works** based on the Work.
 *   **Sublicense** the Work.
-*   **Use** the Work for
+*   **Use** th
