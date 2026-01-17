@@ -208,4 +208,4 @@ http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-... (Full license text availabl
+... (Full lice
