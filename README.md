@@ -211,4 +211,4 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 ... (Full license text available in the LICENSE file) ...
 ```
 
-**Copyright (c) 2024 hedi0. Al
+**Copyright (c) 2024
