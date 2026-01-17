@@ -213,5 +213,4 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
 **Copyright (c) 2024 hedi0. All rights reserved.**
 
-Under the Apache License 2.0, you are free to:
-*   **Re
+Under the Apache License 2.0, you are free to
