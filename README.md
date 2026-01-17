@@ -213,4 +213,4 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
 **Copyright (c) 2024 hedi0. All rights reserved.**
 
-Under the A
+Und
