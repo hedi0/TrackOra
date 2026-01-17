@@ -211,4 +211,4 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 ... (Full license text available in the LICENSE file) ...
 ```
 
-**Copyright
+**
