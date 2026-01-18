@@ -199,4 +199,4 @@ Please use descriptive branch names based on the type of work:
 
 This project is licensed under the **Apache License 2.0**.
 
-You can find the full license text [here](LICENSE) or read a summar
+You can find the full license text [here](LICEN
