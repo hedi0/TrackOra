@@ -195,4 +195,4 @@ Please use descriptive branch names based on the type of work:
 *   **Integration Tests:** Ensure your changes integrate correctly with existing components.
 *   **Hardware Testing:** For LoRa module changes, thoroughly test on actual hardware to confirm functionality and stability.
 
-## 📄 License Informatio
+## 📄 License In
