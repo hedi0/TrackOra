@@ -193,4 +193,4 @@ Please use descriptive branch names based on the type of work:
 
 *   **Unit Tests:** If applicable, add or update unit tests for new features or bug fixes, especially for the mobile/web applications.
 *   **Integration Tests:** Ensure your changes integrate correctly with existing components.
-*   **Hardware Testing:** For LoRa module changes, thoroughly test on actual hardware to
+*   **Hardware Testing:** For LoRa module changes, thoroughly test on actual h
