@@ -204,4 +204,4 @@ You can find the full license text [here](LICENSE) or read a summary below:
 ```
 Apache License
 Version 2.0, January 2004
-http://www.apache.org/licenses/
+h
