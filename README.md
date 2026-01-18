@@ -203,4 +203,4 @@ You can find the full license text [here](LICENSE) or read a summary below:
 
 ```
 Apache License
-Version 2.0, Janua
+Versio
