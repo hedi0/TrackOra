@@ -189,4 +189,3 @@ Please use descriptive branch names based on the type of work:
     *   Provide a clear title and detailed description of your changes.
     *   Reference any related issues.
 
-### Te
