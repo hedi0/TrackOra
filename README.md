@@ -186,4 +186,4 @@ Please use descriptive branch names based on the type of work:
 4.  **Commit your changes** with clear, concise commit messages.
 5.  **Push your branch** to your forked repository.
 6.  **Open a Pull Request** to the `main` branch of the original repository.
-    *   Provide a clear title and detailed descripti
+    *   Provide a clear title and det
