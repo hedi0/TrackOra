@@ -192,4 +192,4 @@ Please use descriptive branch names based on the type of work:
 ### Testing Requirements
 
 *   **Unit Tests:** If applicable, add or update unit tests for new features or bug fixes, especially for the mobile/web applications.
-*   **Integration Tests:** Ensure your changes integrate correctly with 
+*   **Integration Tests:** Ensure your changes integrate cor
