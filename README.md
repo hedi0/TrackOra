@@ -184,4 +184,4 @@ Please use descriptive branch names based on the type of work:
 2.  **Make your changes**, ensuring they align with the project's goals and style.
 3.  **Test your changes thoroughly** (see Testing Requirements below).
 4.  **Commit your changes** with clear, concise commit messages.
-5.  **Push your bran
+5.  **Pus
