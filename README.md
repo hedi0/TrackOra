@@ -183,4 +183,4 @@ Please use descriptive branch names based on the type of work:
 1.  **Fork the repository** and create your branch from `main`.
 2.  **Make your changes**, ensuring they align with the project's goals and style.
 3.  **Test your changes thoroughly** (see Testing Requirements below).
-4.  **Commit your changes** with clear, concise c
+4.  **Commit your changes** with clear, 
