@@ -171,6 +171,4 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 
 ### Branch Naming Conventions
 
-Please use descriptive branch names based on the type of work:
-
-* 
+Please use descriptive branch names based on the type of
