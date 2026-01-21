@@ -177,4 +177,3 @@ Please use descriptive branch names based on the type of work:
 *   `bugfix/issue-description`: For bug fixes.
 *   `refactor/area-of-refactor`: For code refactoring.
 *   `docs/documentation-update`: For documentation changes
-### P
