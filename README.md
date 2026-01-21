@@ -175,5 +175,4 @@ Please use descriptive branch names based on the type of work:
 
 *   `feature/your-feature-name`: For new features.
 *   `bugfix/issue-description`: For bug fixes.
-*   `refactor/area-of-refactor`: For code refactoring.
-*   `docs
+*   `refactor/area-of-refactor`: For code refactor
