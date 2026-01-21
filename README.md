@@ -178,4 +178,4 @@ Please use descriptive branch names based on the type of work:
 *   `refactor/area-of-refactor`: For code refactoring.
 *   `docs/documentation-update`: For documentation changes.
 
-### Pull Request Proces
+### Pull Requ
