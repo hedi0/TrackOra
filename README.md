@@ -180,4 +180,4 @@ Please use descriptive branch names based on the type of work:
 
 ### Pull Request Process
 
-1.  **Fork the repository** an
+1.  **Fork the rep
