@@ -65,7 +65,7 @@ Ensure you have the following installed:
           Serial.begin(115200);
           while (!Serial);
 
-          if (!LoRa.begin(433E6)) { // or 868E6, 915E6
+          if (!LoRa.begin(868E6)) { // or 433E6, 915E6
             Serial.println("Starting LoRa failed!");
             while (1);
           }
