@@ -173,4 +173,4 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 
 Please use descriptive branch names based on the type of work:
 
-*   `feature/your-feature-name`: For new featu
+*   `feature/your-feature-name`: F
