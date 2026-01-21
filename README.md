@@ -120,7 +120,7 @@ The LoRa sender and receiver modules can be configured with various parameters. 
 
 | Parameter   | Description                                     | Default Value |
 | :---------- | :---------------------------------------------- | :------------ |
-| `LORA_FREQ` | LoRa frequency (e.g., 433E6, 868E6, 915E6)     | `433E6`       |
+| `LORA_FREQ` | LoRa frequency (e.g., 433E6, 868E6, 915E6)     | `868E6`       |
 | `SPREAD_FACTOR` | Spreading factor for LoRa modulation           | `7`           |
 | `TX_POWER`  | Transmission power of the LoRa sender (dBm)     | `17`          |
 | `NODE_ID`   | Unique identifier for the sending device        | `0x01`        |
