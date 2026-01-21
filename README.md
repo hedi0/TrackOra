@@ -170,5 +170,3 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 *   Ensure your code is well-formatted (e.g., using `flutter format .` for Dart code).
 
 ### Branch Naming Conventions
-
-Please use descriptive
