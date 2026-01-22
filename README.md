@@ -169,4 +169,4 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 *   **Dart/Flutter:** Follow the [Effective Dart](https://dart.dev/guides/language/effective-dart) guidelines.
 *   Ensure your code is well-formatted (e.g., using `flutter format .` for Dart code).
 
-### Branch Naming Conventions
+### Branch Nami
