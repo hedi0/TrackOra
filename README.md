@@ -161,4 +161,4 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 ## 🤝 Contribution Guidelines
 
-We welcome contributions to TrackOra! To ensure a smooth collaboratio
+We welcome contributions to TrackOra! To ensure a smooth.
