@@ -165,4 +165,4 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 
 ### Code Style
 
-*   **C++:** Adhere to common C++ best practices, 
+*   **C++:** Adhere to common C++ best prac
