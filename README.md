@@ -166,4 +166,4 @@ We welcome contributions to TrackOra! To ensure a smooth collaboration, please f
 ### Code Style
 
 *   **C++:** Adhere to common C++ best practices, using clear variable names and comments where necessary.
-*   **Dart/Flutter:** Follow the [Effective Dart](https://dart.dev/guides/language/effective-da
+*   **Dart/Flutter:** Follow the [Effective Dart](https://dart.dev/guides/language/ef
