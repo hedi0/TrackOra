@@ -158,5 +158,3 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
     *   Support for multiple LoRa gateways.
     *   Integration with cloud platforms (AWS IoT, Google Cloud IoT).
     *   Firmware update over the air (FOTA) for LoRa modules.
-
-## 🤝 Contr
