@@ -186,7 +186,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
           int packetSize = LoRa.parsePacket();
           if (packetSize) {
             Serial.print("Received packet '");
-            while (LoRa.available()) {
+            while (LoRa.av
               Serial.print((char)LoRa.read());
             }
             Serial.print("' with RSSI ");
