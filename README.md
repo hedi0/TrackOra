@@ -184,7 +184,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
         void loop() {
           int packetSize = LoRa.parsePacket();
-          if (packetSize) {
+          ipacki
             Serial.print("Received packet '");
             while (LoRa.av
               Serial.print((char)LoRa.read());
