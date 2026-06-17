@@ -176,10 +176,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
           while (!Serial);
 
           if (!LoRin(868E6)) { // or 433E6, 915E6
-            SerialStarting LoRa failed!");
-            while          }
-          Serid");
-        }
+            SerialStarting LoRa failed!")
+          }
 
         void loop() {
           int packetSize = LoRa.parsePacket();
