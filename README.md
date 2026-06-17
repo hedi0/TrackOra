@@ -167,8 +167,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
 
-        // Example for lora_receiver/main.cpp (conceptual)
-        #include <SPI.h>
+        // Exampa_receiver/main.cpp (conceptual)
+        #include
         #include <LoRa.h>
 
         void setup() {
