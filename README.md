@@ -179,7 +179,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
             Serial.println("Starting LoRa failed!");
             while (1);
           }
-          Serial.println("LoRa Initialized");
+          Serid");
         }
 
         void loop() {
