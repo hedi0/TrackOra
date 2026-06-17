@@ -158,3 +158,36 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
     *   Support for multiple LoRa gateways.
     *   Integration with cloud platforms (AWS IoT, Google Cloud IoT).
     *   Firmware update over the air (FOTA) for LoRa modules.
+
+
+
+
+
+
+
+
+
+        // Example for lora_receiver/main.cpp (conceptual)
+        #include <SPI.h>
+        #include <LoRa.h>
+
+        void setup() {
+          Serial.begin(115200);
+          while (!Serial);
+
+          if (!LoRa.begin(868E6)) { // or 433E6, 915E6
+            Serial.println("Starting LoRa failed!");
+            while (1);
+          }
+          Serial.println("LoRa Initialized");
+        }
+
+        void loop() {
+          int packetSize = LoRa.parsePacket();
+          if (packetSize) {
+            Serial.print("Received packet '");
+            while (LoRa.available()) {
+              Serial.print((char)LoRa.read());
+            }
+            Serial.print("' with RSSI ");
+            Serial.println(LoRa.packetRssi());
