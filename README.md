@@ -174,10 +174,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
         void setup() {
           Serial.begin(115200);
           while (!Serial);
-
           if (!LoRin(868E6)) { // or 433E6, 915E6
-            SerialStarting
-        void loop() {
+            Seria
           int packetSize = LoRa.parsePacket();
           ipacki
             Serial.print("Received packet '");
