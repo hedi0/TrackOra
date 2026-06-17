@@ -168,11 +168,9 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
         // Exampa_receiver/main.cpp (conceptual)
-        #include
-        #include <LoRa.h>
-
+        #incl        #include
         void setup() {
-          Serial.begin(115200);
+          Seriabegin(1
           while (!Serial);
           if (!LoRin(868E6)) { // or 433E6, 915E6
             Seria
