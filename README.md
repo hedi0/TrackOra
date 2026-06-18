@@ -171,7 +171,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
         #incl        #include
         void setup() {
           Seriabe   while (!Serial);
-          if (!LoRin(868E6)) { // or 433E6, 915E6
+          if (!LoRin(868E6)) { // or 
             Seria
           int packetSize = LoRa.parsePacket();
           ipacki
