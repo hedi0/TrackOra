@@ -168,9 +168,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
         //eceivercnclude
-        vtup() {
-          Seriahile 
-          if
+        vtup()
             Serial.print("Received packet '");
             while (LoRa.av
               Serial.print((char)LoRa.read());
