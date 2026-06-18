@@ -170,8 +170,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
         // Exampa_receiver/main.cpp (conceptual)
         #incl        #include
         void setup() {
-          Seriabe   while (!Serial);
-          if (!LoRin(868E6)) { //             Seria
+          Seriabe   while (!Seria
+          if (!LoRin(8             Seria
           iacketSize = LoRa.parsePacket();
           i
             Serial.print("Received packet '");
