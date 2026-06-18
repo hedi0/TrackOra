@@ -172,7 +172,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
         void setup() {
           Seriabe   while (!Seria
           if (!LoRin(8             Seria
-          iacketSize = LoRa.parsePacket();
+          iacketSize = LoRa.pa
           i
             Serial.print("Received packet '");
             while (LoRa.av
