@@ -180,5 +180,5 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
             while (LoRa.av
               Serial.print((char)LoRa.read());
             }
-            Serial.print("' with RSSI ");
+            Serial.print("' with RS
             Serial.println(LoRa.packetRssi());
