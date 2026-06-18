@@ -167,9 +167,9 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
 
-        //eceiver/        #incnclude
+        //eceivercnclude
         vtup() {
-          Seriahile (!S
+          Seriahile 
           if (!LoRin(
           iac
             Serial.print("Received packet '");
