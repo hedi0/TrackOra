@@ -167,8 +167,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
 
-        // Exampa_receiver/main.cpp (conceptual)
-        #incl        #include
+        //eceiver/main.cpp (conceptual)
+        #incnclude
         vtup() {
           Seriahile (!S
           if (!LoRin(
