@@ -166,9 +166,7 @@ up()
    al.print("Receiv
  while (L
  Serial.pri
- Serial.print("' with RS
-  S  
-
+ Serial.print("' 
 
 
 
