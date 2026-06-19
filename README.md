@@ -173,4 +173,4 @@ up()
             while (L
               Serial.pri
             Serial.print("' with RS
-            Serial.println(LoRa.packetRss
+            Serial.println(LoRa.p
