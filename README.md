@@ -167,7 +167,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
 
-        //eceivercnclude
+        //ecei
 up()
             Serial.print("Received packet 
             while (LoRa.av
