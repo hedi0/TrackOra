@@ -169,7 +169,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
         //eceivercnclude
 up()
-            Serial.print("Received packet '");
+            Serial.print("Received packet 
             while (LoRa.av
               Serial.print((char)LoRa.read(
             Serial.print("' with RS
