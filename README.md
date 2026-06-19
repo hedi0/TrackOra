@@ -163,7 +163,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
         //ec
 up()
-   al.print("Received packet 
+   al.print("Receiv
  while (L
  Serial.pri
  Serial.print("' with RS
