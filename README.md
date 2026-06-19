@@ -171,6 +171,6 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 up()
    al.print("Received packet 
             while (L
-              Serial.print((char)LoRa.read(
+              Serial.pri
             Serial.print("' with RS
             Serial.println(LoRa.packetRss
