@@ -163,8 +163,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 c
    al.print("Receiv
- while (L
- Serial.pri
+ whi
+ Ser.pri
  Serial.p 
 
 
