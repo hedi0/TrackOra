@@ -160,7 +160,7 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
     *   Firmware update over the air (FOTA) for LoRa modules.
 
 
-
+uhihuhhihuhi yggygugggy
 
 
 
