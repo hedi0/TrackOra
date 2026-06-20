@@ -165,7 +165,7 @@ c
    al.print("Receiv
  while (L
  Serial.pri
- Serial.print("' 
+ Serial.p 
 
 
 
