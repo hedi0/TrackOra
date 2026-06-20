@@ -161,11 +161,8 @@ TrackOra is continuously evolving! Here's a glimpse of what's planned for the fu
 
 
 
-c
-   al.print("Receiv
- whi
- Ser.pri
- Serial.p 
+cal.print("Receiv
+ whiSer.pSerial.pkoko
 
 
 
